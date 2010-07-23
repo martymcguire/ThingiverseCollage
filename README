@@ -1,0 +1,46 @@
+ThingiverseCollage - Processing sketch for filling an SVG shape with STL images
+
+Implementation based on space filling Processing example:
+  * http://www.openprocessing.org/visuals/?visualID=1811
+
+Expects Plain SVG with a single path (no groups of objects).
+
+Installation:
+ * This sketch uses a modified version the unlekkerLib to load and render STL 
+   files.  Copy the libraries/unlekkerLib/ directory to your Processing 
+   sketchbook's libraries directory.
+   * More info about the original unlekkerLib can be found at:
+     http://workshop.evolutionzone.com/unlekkerlib/
+
+Configure:
+ * With SVG filename (in data/ dir), desired bg and fill colors
+ * With STL filenames (in data/ dir)
+ * Choose min/max sizes and number of size steps
+ * Whether you want the output saved to a PDF and the PDF filename.
+
+How it works:
+ 1. Loads the SVG and renders it to an off-screen graphic.
+ 2. Loads the STLs and scales/centers them.
+ 3. Starting at the biggest size, chooses a random STL, orients it randomly, and
+    renders it to a temporary graphic.
+ 4. Chooses a random location to try to render.
+ 5. Compares the temporary graphic pixel-by-pixel with the off-screen SVG
+    (to test that it is inside the shape) and with the current screen (to test
+    that it will not overlap with any shape already onscreen).
+ 6. If it fits, renders it and goes back to 3.  If not, goes back to step 4, 
+    unless we've tried too many times to place this object already.
+      * If we have tried too many times, shrinks to the next object size down
+        and return to step 3.
+      * If the size shrinks below the min_size, the sketch is done.
+
+A Note On Loading STLs
+  * Original lib: http://workshop.evolutionzone.com/unlekkerlib/
+  * Hacked to render FaceLists onto PGraphics.
+  * Won't load ASCII STL files.
+    * OpenSCAD and maybe SketchUp export ASCII STLs :(
+    * Open and re-save ASCII STLs in Pleasant3D to make them binary. :)
+  * Recompiling te unlekkerlib source:
+    * OS X Example:
+      * cd libraries/unlekkerLib/src
+      * find . | grep \.java$ | xargs javac -cp /Applications/Processing.app/Contents/Resources/Java/core.jar:/Applications/Processing.app/Contents/Resources/Java/libraries/opengl/library/opengl.jar
+      * find . | grep \.class$ | xargs zip ../library/unlekkerLib.jar
